@@ -26,13 +26,34 @@ namespace SimpleStateMachines
 
 		public bool maskable;
 	}
+	[System.Serializable]
+	public struct SimpleStateMachineAnimator
+	{
+		public bool stateMachineActive;
 
+		public bool enable;
+
+		public RuntimeAnimatorController controller;
+		public Avatar avatar;
+		public bool applyRootMotion;
+		public AnimatorUpdateMode updateMode;
+		public AnimatorCullingMode cullingMode;
+	}
+	[System.Serializable]
+	public struct SimpleStateMachineAnimation
+	{
+		public bool stateMachineActive;
+		public bool forced;
+		public string animationKey;
+	}
 	[System.Serializable]
 	public struct SimpleStateMachineGroup
 	{
 		public string name;
 		public SimpleStateMachineGameObject simpleStateMachineGameObject;
 		public SimpleStateMachineImage simpleStateMachineImage;
+		public SimpleStateMachineAnimator simpleStateMachineAnimator;
+		public SimpleStateMachineAnimation simpleStateMachineAnimation;
 	}
 
 	[DisallowMultipleComponent]
@@ -117,14 +138,24 @@ namespace SimpleStateMachines
 				m_targetImage.maskable = m_applyStateMachineGroup.simpleStateMachineImage.maskable;
 			}
 			if (_targetStateMachineMonoBehaviour.childs is null) return;
+			var m_childs = new List<SimpleStateMachine>();
+			m_childs.AddRange(_targetStateMachineMonoBehaviour.childs);
 			foreach (var child in _targetStateMachineMonoBehaviour.childs)
 			{
 				if (child is null) continue;
+				if (child.childs is null) continue;
+				m_childs.AddRange(child.childs);
 				child.childs = null;
+				
+			}
+			foreach (var child in m_childs)
+			{
+				if (child is null) continue;
 				child.key = _targetStateMachineMonoBehaviour.key;
 				child.parent = _targetStateMachineMonoBehaviour;
 				SetState(child, m_state);
 			}
+			_targetStateMachineMonoBehaviour.childs = m_childs.ToArray();
 		}
 		public static void CopyStateMachine(SimpleStateMachine _targetStateMachineMonoBehaviour, byte _targetState, SimpleStateMachineGroup _copyData)
 		{
@@ -205,6 +236,15 @@ namespace SimpleStateMachines
 		public string GetKey() => this.key;
 		public void SetKey(string _key)
 		{
+			if ((!string.IsNullOrEmpty(this.key)) && this.parent is null)
+			{
+				if (!(StringKeyToSimpleStateMachineContainer is null))
+				{
+					if (StringKeyToSimpleStateMachineContainer.ContainsKey(this.key))
+						StringKeyToSimpleStateMachineContainer.Remove(this.key);
+				}
+			}
+
 			this.key = _key;
 			if (childs is null) return;
 			foreach (var child in childs)

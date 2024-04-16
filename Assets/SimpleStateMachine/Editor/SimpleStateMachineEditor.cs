@@ -133,12 +133,14 @@ public class SimpleStateMachineEditor : Editor
 				var m_stateMachineNameProp = m_stateMachineGroupProp.FindPropertyRelative("name");
 				var m_stateMachineGameObjectProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineGameObject");
 				var m_stateMachineImageProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineImage");
-				
-				var m_rect=  EditorGUILayout.BeginHorizontal(GUI.skin.box);
+				var m_stateMachineAnimatorProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineAnimator");
+				var m_stateMachineAnimationProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineAnimation");
+
+				var m_rect =  EditorGUILayout.BeginHorizontal(GUI.skin.box);
 				if (i == state)
 				{
-					var m_tempCOlor = Color.yellow;
-					m_tempCOlor.a = 0.1f;
+					var m_tempCOlor = Color.cyan;
+					m_tempCOlor.a = 0.05f;
 					EditorGUI.DrawRect(m_rect, m_tempCOlor);
 				}
 			
@@ -147,6 +149,8 @@ public class SimpleStateMachineEditor : Editor
 				EditorGUILayout.BeginVertical();
 				DrawStateMachineProp(m_stateMachineGameObjectProp, _view : true);
 				DrawStateMachineProp(m_stateMachineImageProp, _view : !(image is null));
+				DrawStateMachineProp(m_stateMachineAnimatorProp, _view : animator);
+				DrawStateMachineProp(m_stateMachineAnimationProp, _view : animator);
 				EditorGUILayout.BeginHorizontal();
 				if (GUILayout.Button("Copy"))
 				{ 
