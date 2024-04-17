@@ -123,6 +123,7 @@ public class SimpleStateMachineEditor : Editor
 		{
 			EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 
+			EditorGUILayout.LabelField("", m_toolbarStyle, GUILayout.MaxWidth(15));
 			EditorGUILayout.LabelField("Idx", m_toolbarStyle, GUILayout.MaxWidth(55));
 			EditorGUILayout.LabelField("Name", m_toolbarStyle, GUILayout.MaxWidth(55));
 			EditorGUILayout.LabelField("Info", m_toolbarStyle);
@@ -143,7 +144,32 @@ public class SimpleStateMachineEditor : Editor
 					m_tempCOlor.a = 0.05f;
 					EditorGUI.DrawRect(m_rect, m_tempCOlor);
 				}
-			
+				var m_totalOpen =
+					m_stateMachineGameObjectProp.isExpanded ||
+					m_stateMachineImageProp.isExpanded ||
+					m_stateMachineAnimatorProp.isExpanded ||
+					m_stateMachineAnimationProp.isExpanded;
+				if (m_totalOpen)
+				{
+					if (GUILayout.Button(EditorGUIUtility.IconContent("icon dropdown@2x"), GUI.skin.name, GUILayout.MaxWidth(15)))
+					{
+						m_stateMachineGameObjectProp.isExpanded = false;
+						m_stateMachineImageProp.isExpanded = false;
+						m_stateMachineAnimatorProp.isExpanded = false;
+						m_stateMachineAnimationProp.isExpanded = false;
+					}
+				}
+				else
+				{
+					if (GUILayout.Button(EditorGUIUtility.IconContent("forward"), GUI.skin.name,GUILayout.MaxWidth(15)))
+					{
+						m_stateMachineGameObjectProp.isExpanded = true;
+						m_stateMachineImageProp.isExpanded = true;
+						m_stateMachineAnimatorProp.isExpanded = true;
+						m_stateMachineAnimationProp.isExpanded = true;
+					}
+				}
+
 				EditorGUILayout.LabelField(i.ToString(), m_labelCenterAlignmentStyle, GUILayout.MaxWidth(55));
 				m_stateMachineNameProp.stringValue = EditorGUILayout.TextArea(m_stateMachineNameProp.stringValue, new GUIStyle(GUI.skin.textArea) { alignment = TextAnchor.MiddleCenter }, GUILayout.MaxWidth(55));
 				EditorGUILayout.BeginVertical();

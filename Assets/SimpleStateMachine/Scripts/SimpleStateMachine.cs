@@ -5,14 +5,33 @@ using UnityEngine;
 using UnityEngine.UI;
 namespace SimpleStateMachines
 {
+	public interface SimpleStateMachineBase<T>
+	{
+		public void Apply(T _target);
+	}
+
 	[System.Serializable]
-	public struct SimpleStateMachineGameObject 
+	public struct SimpleStateMachineGameObject : SimpleStateMachineBase<GameObject>
 	{
 		public bool stateMachineActive;
 		public bool active;
+
+		public void Apply(GameObject _target)
+		{
+			if (_target is null) return;
+			if (!stateMachineActive) return;
+			_target.SetActive(active);
+		}
 	}
 	[System.Serializable]
-	public struct SimpleStateMachineImage
+	public struct SimpleStateMachineTransform { }
+
+	[System.Serializable]
+	public struct SimpleStateMachineRectTransform { }
+
+
+	[System.Serializable]
+	public struct SimpleStateMachineImage : SimpleStateMachineBase<Image>
 	{
 		public bool stateMachineActive;
 
@@ -25,9 +44,23 @@ namespace SimpleStateMachines
 		public Vector4 raycastPadding;
 
 		public bool maskable;
+		public void Apply(Image _target)
+		{
+			if (_target is null) return;
+			if (!stateMachineActive) return;
+			_target.enabled = enable;
+
+			_target.sprite = sprite;
+			_target.color = color;
+			_target.material = material;
+			_target.raycastTarget = raycastTarget;
+			_target.raycastPadding = Vector4.zero + raycastPadding;
+
+			_target.maskable = maskable;
+		}
 	}
 	[System.Serializable]
-	public struct SimpleStateMachineAnimator
+	public struct SimpleStateMachineAnimator : SimpleStateMachineBase<Animator>
 	{
 		public bool stateMachineActive;
 
@@ -38,13 +71,32 @@ namespace SimpleStateMachines
 		public bool applyRootMotion;
 		public AnimatorUpdateMode updateMode;
 		public AnimatorCullingMode cullingMode;
+
+		public void Apply(Animator _target)
+		{
+			if (!(_target)) return;
+			if (!stateMachineActive) return;
+
+			_target.enabled = enable;
+			_target.runtimeAnimatorController = controller;
+			_target.avatar = avatar;
+			_target.applyRootMotion = applyRootMotion;
+			_target.updateMode = updateMode;
+			_target.cullingMode = cullingMode;
+		}
 	}
 	[System.Serializable]
-	public struct SimpleStateMachineAnimation
+	public struct SimpleStateMachineAnimation : SimpleStateMachineBase<Animator>
 	{
 		public bool stateMachineActive;
 		public bool forced;
 		public string animationKey;
+
+		public void Apply(Animator _target)
+		{
+			if (!(_target)) return;
+			if (!stateMachineActive) return;
+		}
 	}
 	[System.Serializable]
 	public struct SimpleStateMachineGroup
@@ -120,23 +172,16 @@ namespace SimpleStateMachines
 			var m_applyStateMachineGroup = _targetStateMachineMonoBehaviour.stateMachineGroup[m_state ];
 
 			 var m_targetGameObject = SimpleStateMachineToGameObjectContainer[_targetStateMachineMonoBehaviour];
-			if (m_applyStateMachineGroup.simpleStateMachineGameObject.stateMachineActive)
-			{ 
-				m_targetGameObject.SetActive(m_applyStateMachineGroup.simpleStateMachineGameObject.active);
-			}
+			m_applyStateMachineGroup.simpleStateMachineGameObject.Apply(m_targetGameObject);
+
 			var m_targetImage = _targetStateMachineMonoBehaviour.image;
-			if (!(m_targetImage is null) && m_applyStateMachineGroup.simpleStateMachineImage.stateMachineActive)
-			{
-				m_targetImage.enabled = m_applyStateMachineGroup.simpleStateMachineImage.enable;
+			m_applyStateMachineGroup.simpleStateMachineImage.Apply(m_targetImage);
 
-				m_targetImage.sprite = m_applyStateMachineGroup.simpleStateMachineImage.sprite;
-				m_targetImage.color = m_applyStateMachineGroup.simpleStateMachineImage.color;
-				m_targetImage.material = m_applyStateMachineGroup.simpleStateMachineImage.material;
-				m_targetImage.raycastTarget = m_applyStateMachineGroup.simpleStateMachineImage.raycastTarget;
-				m_targetImage.raycastPadding = Vector4.zero+ m_applyStateMachineGroup.simpleStateMachineImage.raycastPadding;
+			var m_targetAnimator = _targetStateMachineMonoBehaviour.animator;
+			m_applyStateMachineGroup.simpleStateMachineAnimator.Apply(m_targetAnimator);
+			m_applyStateMachineGroup.simpleStateMachineAnimation.Apply(m_targetAnimator);
 
-				m_targetImage.maskable = m_applyStateMachineGroup.simpleStateMachineImage.maskable;
-			}
+
 			if (_targetStateMachineMonoBehaviour.childs is null) return;
 			var m_childs = new List<SimpleStateMachine>();
 			m_childs.AddRange(_targetStateMachineMonoBehaviour.childs);
@@ -146,7 +191,6 @@ namespace SimpleStateMachines
 				if (child.childs is null) continue;
 				m_childs.AddRange(child.childs);
 				child.childs = null;
-				
 			}
 			foreach (var child in m_childs)
 			{

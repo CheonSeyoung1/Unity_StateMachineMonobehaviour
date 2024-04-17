@@ -246,7 +246,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &175313569
 RectTransform:
   m_ObjectHideFlags: 0
@@ -288,7 +288,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5660378, g: 0.088109665, b: 0.088109665, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -325,8 +325,8 @@ MonoBehaviour:
   stateMachineGroup:
   - name: 
     simpleStateMachineGameObject:
-      stateMachineActive: 0
-      active: 1
+      stateMachineActive: 1
+      active: 0
     simpleStateMachineImage:
       stateMachineActive: 1
       enable: 1
@@ -337,8 +337,8 @@ MonoBehaviour:
       raycastPadding: {x: 0, y: 0, z: 0, w: 0}
       maskable: 0
     simpleStateMachineAnimator:
-      stateMachineActive: 0
-      enable: 0
+      stateMachineActive: 1
+      enable: 1
       controller: {fileID: 0}
       avatar: {fileID: 0}
       applyRootMotion: 0
@@ -350,7 +350,7 @@ MonoBehaviour:
       animationKey: 
   - name: 
     simpleStateMachineGameObject:
-      stateMachineActive: 0
+      stateMachineActive: 1
       active: 1
     simpleStateMachineImage:
       stateMachineActive: 1
@@ -362,7 +362,7 @@ MonoBehaviour:
       raycastPadding: {x: 0, y: 0, z: 0, w: 0}
       maskable: 0
     simpleStateMachineAnimator:
-      stateMachineActive: 0
+      stateMachineActive: 1
       enable: 0
       controller: {fileID: 0}
       avatar: {fileID: 0}
@@ -375,8 +375,8 @@ MonoBehaviour:
       animationKey: 
   - name: 
     simpleStateMachineGameObject:
-      stateMachineActive: 0
-      active: 1
+      stateMachineActive: 1
+      active: 0
     simpleStateMachineImage:
       stateMachineActive: 1
       enable: 1
@@ -387,8 +387,8 @@ MonoBehaviour:
       raycastPadding: {x: 0, y: 0, z: 0, w: 0}
       maskable: 0
     simpleStateMachineAnimator:
-      stateMachineActive: 0
-      enable: 0
+      stateMachineActive: 1
+      enable: 1
       controller: {fileID: 0}
       avatar: {fileID: 0}
       applyRootMotion: 0
@@ -400,7 +400,7 @@ MonoBehaviour:
       animationKey: 
   image: {fileID: 175313573}
   animator: {fileID: 175313575}
-  state: 0
+  state: 2
   maxState: 3
 --- !u!95 &175313575
 Animator:
@@ -556,7 +556,7 @@ MonoBehaviour:
       animationKey: 
   image: {fileID: 1428901955}
   animator: {fileID: 1428901954}
-  state: 0
+  state: 2
   maxState: 3
 --- !u!95 &1428901954
 Animator:
@@ -592,7 +592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5660378, g: 0.088109665, b: 0.088109665, a: 1}
+  m_Color: {r: 0.5647059, g: 0.5154582, b: 0.08627452, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -730,7 +730,7 @@ MonoBehaviour:
       animationKey: 
   image: {fileID: 1887357891}
   animator: {fileID: 1887357890}
-  state: 0
+  state: 2
   maxState: 3
 --- !u!95 &1887357890
 Animator:
@@ -766,7 +766,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19546053, g: 0.5647059, b: 0.08627452, a: 1}
+  m_Color: {r: 0.5660378, g: 0.088109665, b: 0.088109665, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
