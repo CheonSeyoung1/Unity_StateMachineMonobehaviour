@@ -22,6 +22,8 @@ public class SimpleStateMachineEditor : Editor
 	private static bool hasCopyData = false;
 	private static SimpleStateMachineGroup copyData;
 
+	private MeshFilter meshFilter;
+	private MeshRenderer meshRenderer;
 	private Image image;
 	private Animator animator;
 
@@ -76,6 +78,20 @@ public class SimpleStateMachineEditor : Editor
 		
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Target Components");
+		meshFilter = stateMachineMonoBehaviour.GetMeshFilter();
+		if (meshFilter)
+		{
+			EditorGUI.BeginDisabledGroup(true);
+			stateMachineMonoBehaviour.SetImage(EditorGUILayout.ObjectField("MeshFilter", image, typeof(Image), true) as Image);
+			EditorGUI.EndDisabledGroup();
+		}
+		meshRenderer = stateMachineMonoBehaviour.GetMeshRenderer();
+		if (meshRenderer)
+		{
+			EditorGUI.BeginDisabledGroup(true);
+			stateMachineMonoBehaviour.SetImage(EditorGUILayout.ObjectField("MeshRenderer", image, typeof(Image), true) as Image);
+			EditorGUI.EndDisabledGroup();
+		}
 		image = stateMachineMonoBehaviour.GetImage();
 		if (!(image is null))
 		{
@@ -133,6 +149,8 @@ public class SimpleStateMachineEditor : Editor
 				var m_stateMachineGroupProp = stateMachineGroupProp.GetArrayElementAtIndex(i);
 				var m_stateMachineNameProp = m_stateMachineGroupProp.FindPropertyRelative("name");
 				var m_stateMachineGameObjectProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineGameObject");
+				var m_stateMachineMeshFilterProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineMeshFilter");
+				var m_stateMachineMeshRendererProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineMeshRenderer");
 				var m_stateMachineImageProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineImage");
 				var m_stateMachineAnimatorProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineAnimator");
 				var m_stateMachineAnimationProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineAnimation");
@@ -146,6 +164,8 @@ public class SimpleStateMachineEditor : Editor
 				}
 				var m_totalOpen =
 					m_stateMachineGameObjectProp.isExpanded ||
+					m_stateMachineMeshFilterProp.isExpanded ||
+					m_stateMachineMeshRendererProp.isExpanded ||
 					m_stateMachineImageProp.isExpanded ||
 					m_stateMachineAnimatorProp.isExpanded ||
 					m_stateMachineAnimationProp.isExpanded;
@@ -154,6 +174,8 @@ public class SimpleStateMachineEditor : Editor
 					if (GUILayout.Button(EditorGUIUtility.IconContent("icon dropdown@2x"), GUI.skin.name, GUILayout.MaxWidth(15)))
 					{
 						m_stateMachineGameObjectProp.isExpanded = false;
+						m_stateMachineMeshFilterProp.isExpanded = false;
+						m_stateMachineMeshRendererProp.isExpanded = false;
 						m_stateMachineImageProp.isExpanded = false;
 						m_stateMachineAnimatorProp.isExpanded = false;
 						m_stateMachineAnimationProp.isExpanded = false;
@@ -164,6 +186,8 @@ public class SimpleStateMachineEditor : Editor
 					if (GUILayout.Button(EditorGUIUtility.IconContent("forward"), GUI.skin.name,GUILayout.MaxWidth(15)))
 					{
 						m_stateMachineGameObjectProp.isExpanded = true;
+						m_stateMachineMeshFilterProp.isExpanded = true;
+						m_stateMachineMeshRendererProp.isExpanded = true;
 						m_stateMachineImageProp.isExpanded = true;
 						m_stateMachineAnimatorProp.isExpanded = true;
 						m_stateMachineAnimationProp.isExpanded = true;
@@ -174,6 +198,8 @@ public class SimpleStateMachineEditor : Editor
 				m_stateMachineNameProp.stringValue = EditorGUILayout.TextArea(m_stateMachineNameProp.stringValue, new GUIStyle(GUI.skin.textArea) { alignment = TextAnchor.MiddleCenter }, GUILayout.MaxWidth(55));
 				EditorGUILayout.BeginVertical();
 				DrawStateMachineProp(m_stateMachineGameObjectProp, _view : true);
+				DrawStateMachineProp(m_stateMachineMeshFilterProp, meshFilter);
+				DrawStateMachineProp(m_stateMachineMeshRendererProp, meshRenderer);
 				DrawStateMachineProp(m_stateMachineImageProp, _view : !(image is null));
 				DrawStateMachineProp(m_stateMachineAnimatorProp, _view : animator);
 				DrawStateMachineProp(m_stateMachineAnimationProp, _view : animator);

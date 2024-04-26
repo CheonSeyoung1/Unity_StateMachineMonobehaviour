@@ -27,6 +27,68 @@ namespace SimpleStateMachines
 	public struct SimpleStateMachineTransform { }
 
 	[System.Serializable]
+	public struct SimpleStateMachineMeshFilter 
+	{
+		public bool stateMachineActive;
+		public Mesh mesh;
+		public void Apply(MeshFilter _target)
+		{
+			if (_target is null) return;
+			if (!stateMachineActive) return;
+			_target.mesh = mesh;
+		}
+	}
+
+	[System.Serializable]
+	public struct SimpleStateMachineMeshRenderer
+	{
+		[System.Serializable]
+		public struct LightingSetting
+		{
+			public UnityEngine.Rendering.ShadowCastingMode castShadows;
+			public bool contributeGlobalIllumination;
+			public ReceiveGI receiveGlobalIllumination;
+		}
+		[System.Serializable]
+		public struct AdditionalSetting
+		{
+			public bool dynamicOcculusion;
+			public uint renderingLayerMask;
+		}
+
+		public bool stateMachineActive; 
+		
+		public bool enable;
+		public Material[] materials;
+
+		public LightingSetting lightingSetting;
+		public AdditionalSetting additionalSetting;
+		public void Apply(MeshRenderer _target)
+		{
+			if (_target is null) return;
+			if (!stateMachineActive) return;
+			_target.enabled = enable;
+			Material m_mat = null;
+			if (!(materials is null))
+			{ 
+				var m_mats = materials.Where(m_mat => !(m_mat is null));
+				if (m_mats.Any())
+					m_mat = m_mats.First();
+			}
+			_target.material = m_mat;
+			_target.materials = materials;
+
+			_target.shadowCastingMode = lightingSetting.castShadows;
+			if (_target.gameObject.isStatic != lightingSetting.contributeGlobalIllumination)
+				_target.gameObject.isStatic = lightingSetting.contributeGlobalIllumination;
+			_target.receiveGI = lightingSetting.receiveGlobalIllumination;
+
+			_target.allowOcclusionWhenDynamic = additionalSetting.dynamicOcculusion;
+			_target.renderingLayerMask = additionalSetting.renderingLayerMask;
+		}
+	}
+
+	[System.Serializable]
 	public struct SimpleStateMachineRectTransform { }
 
 
@@ -103,6 +165,8 @@ namespace SimpleStateMachines
 	{
 		public string name;
 		public SimpleStateMachineGameObject simpleStateMachineGameObject;
+		public SimpleStateMachineMeshFilter simpleStateMachineMeshFilter;
+		public SimpleStateMachineMeshRenderer simpleStateMachineMeshRenderer;
 		public SimpleStateMachineImage simpleStateMachineImage;
 		public SimpleStateMachineAnimator simpleStateMachineAnimator;
 		public SimpleStateMachineAnimation simpleStateMachineAnimation;
@@ -113,13 +177,14 @@ namespace SimpleStateMachines
 	{
 		private static Dictionary<SimpleStateMachine, GameObject> SimpleStateMachineToGameObjectContainer;
 		private static Dictionary<string, SimpleStateMachine> StringKeyToSimpleStateMachineContainer;
-
+		
 		[SerializeField] private string key;
 		[SerializeField] private SimpleStateMachine parent;
 		[SerializeField] private SimpleStateMachine[] childs;
 
 		[SerializeField] private SimpleStateMachineGroup[] stateMachineGroup = new SimpleStateMachineGroup[0];
-
+		[SerializeField] private MeshFilter meshFilter;
+		[SerializeField] private MeshRenderer meshRenderer;
 		[SerializeField] private Image image;
 
 		[SerializeField] private Animator animator;
@@ -173,6 +238,12 @@ namespace SimpleStateMachines
 
 			 var m_targetGameObject = SimpleStateMachineToGameObjectContainer[_targetStateMachineMonoBehaviour];
 			m_applyStateMachineGroup.simpleStateMachineGameObject.Apply(m_targetGameObject);
+
+			var m_targetMeshFilter = _targetStateMachineMonoBehaviour.meshFilter;
+			m_applyStateMachineGroup.simpleStateMachineMeshFilter.Apply(m_targetMeshFilter);
+
+			var m_targetMeshRenderer = _targetStateMachineMonoBehaviour.meshRenderer;
+			m_applyStateMachineGroup.simpleStateMachineMeshRenderer.Apply(m_targetMeshRenderer);
 
 			var m_targetImage = _targetStateMachineMonoBehaviour.image;
 			m_applyStateMachineGroup.simpleStateMachineImage.Apply(m_targetImage);
@@ -274,6 +345,8 @@ namespace SimpleStateMachines
 		public byte GetMaxState() => maxState;
 		public void Initialize()
 		{
+			meshFilter = GetComponent<MeshFilter>();
+			meshRenderer = GetComponent<MeshRenderer>();
 			image = GetComponent<Image>();
 			animator = GetComponent<Animator>();
 		}
@@ -344,6 +417,11 @@ namespace SimpleStateMachines
 		}
 
 		public SimpleStateMachineGroup GetStateMachineGroup(byte idx) => stateMachineGroup.Length > idx ? stateMachineGroup[idx] : new SimpleStateMachineGroup();
+
+		public MeshFilter GetMeshFilter() => meshFilter;
+		public void SetMeshFilter(MeshFilter _meshFilter) => meshFilter = _meshFilter;
+		public MeshRenderer GetMeshRenderer() => meshRenderer;
+		public void SetMeshRenderer(MeshRenderer _meshRenderer) => meshRenderer = _meshRenderer;
 
 		public Image GetImage() => image;
 		public void SetImage(Image _image) => image = _image;
