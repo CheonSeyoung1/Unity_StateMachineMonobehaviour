@@ -22,6 +22,8 @@ public class SimpleStateMachineEditor : Editor
 	private static bool hasCopyData = false;
 	private static SimpleStateMachineGroup copyData;
 
+	private Transform transform;
+	private RectTransform rectTransform;
 	private MeshFilter meshFilter;
 	private MeshRenderer meshRenderer;
 	private Image image;
@@ -75,9 +77,12 @@ public class SimpleStateMachineEditor : Editor
 	{
 		var m_labelCenterAlignmentStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
 		var m_toolbarStyle = new GUIStyle(GUI.skin.label) { fontStyle = FontStyle.Bold, alignment = TextAnchor.MiddleCenter };
-		
+
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Target Components");
+		transform = stateMachineMonoBehaviour.transform;
+		rectTransform = stateMachineMonoBehaviour.transform as RectTransform;
+
 		meshFilter = stateMachineMonoBehaviour.GetMeshFilter();
 		if (meshFilter)
 		{
@@ -149,6 +154,7 @@ public class SimpleStateMachineEditor : Editor
 				var m_stateMachineGroupProp = stateMachineGroupProp.GetArrayElementAtIndex(i);
 				var m_stateMachineNameProp = m_stateMachineGroupProp.FindPropertyRelative("name");
 				var m_stateMachineGameObjectProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineGameObject");
+				var m_stateMachineTransformProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineTransform");
 				var m_stateMachineMeshFilterProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineMeshFilter");
 				var m_stateMachineMeshRendererProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineMeshRenderer");
 				var m_stateMachineImageProp = m_stateMachineGroupProp.FindPropertyRelative("simpleStateMachineImage");
@@ -164,6 +170,7 @@ public class SimpleStateMachineEditor : Editor
 				}
 				var m_totalOpen =
 					m_stateMachineGameObjectProp.isExpanded ||
+					m_stateMachineTransformProp.isExpanded ||
 					m_stateMachineMeshFilterProp.isExpanded ||
 					m_stateMachineMeshRendererProp.isExpanded ||
 					m_stateMachineImageProp.isExpanded ||
@@ -174,6 +181,7 @@ public class SimpleStateMachineEditor : Editor
 					if (GUILayout.Button(EditorGUIUtility.IconContent("icon dropdown@2x"), GUI.skin.name, GUILayout.MaxWidth(15)))
 					{
 						m_stateMachineGameObjectProp.isExpanded = false;
+						m_stateMachineTransformProp.isExpanded = false;
 						m_stateMachineMeshFilterProp.isExpanded = false;
 						m_stateMachineMeshRendererProp.isExpanded = false;
 						m_stateMachineImageProp.isExpanded = false;
@@ -186,6 +194,7 @@ public class SimpleStateMachineEditor : Editor
 					if (GUILayout.Button(EditorGUIUtility.IconContent("forward"), GUI.skin.name,GUILayout.MaxWidth(15)))
 					{
 						m_stateMachineGameObjectProp.isExpanded = true;
+						m_stateMachineTransformProp.isExpanded = true;
 						m_stateMachineMeshFilterProp.isExpanded = true;
 						m_stateMachineMeshRendererProp.isExpanded = true;
 						m_stateMachineImageProp.isExpanded = true;
@@ -198,6 +207,7 @@ public class SimpleStateMachineEditor : Editor
 				m_stateMachineNameProp.stringValue = EditorGUILayout.TextArea(m_stateMachineNameProp.stringValue, new GUIStyle(GUI.skin.textArea) { alignment = TextAnchor.MiddleCenter }, GUILayout.MaxWidth(55));
 				EditorGUILayout.BeginVertical();
 				DrawStateMachineProp(m_stateMachineGameObjectProp, _view : true);
+				DrawStateMachineProp(m_stateMachineTransformProp, rectTransform is null && transform);
 				DrawStateMachineProp(m_stateMachineMeshFilterProp, meshFilter);
 				DrawStateMachineProp(m_stateMachineMeshRendererProp, meshRenderer);
 				DrawStateMachineProp(m_stateMachineImageProp, _view : !(image is null));

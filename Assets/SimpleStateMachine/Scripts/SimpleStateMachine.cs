@@ -24,7 +24,39 @@ namespace SimpleStateMachines
 		}
 	}
 	[System.Serializable]
-	public struct SimpleStateMachineTransform { }
+	public struct SimpleStateMachineTransform 
+	{
+		public bool stateMachineActive;
+		/// <summary>
+		/// true = global
+		/// false = local
+		/// </summary>
+		public bool global;
+		public bool positionApply;
+		public Vector3 position;
+		public bool rotationApply;
+		public Vector3 rotation;
+		public bool scaleApply;
+		public Vector3 scale;
+
+		public void Apply(Transform _target)
+		{
+			if (_target is null) return;
+			if (!stateMachineActive) return;
+
+			if (global)
+			{
+				if (positionApply){ _target.position = position; }
+				if (rotationApply) { _target.rotation = Quaternion.Euler(rotation.x,rotation.y,rotation.z); }
+			}
+			else
+			{
+				if (positionApply) { _target.localPosition = position; }
+				if (rotationApply) { _target.localRotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z); }
+				if (scaleApply) { _target.localScale = scale; }
+			}
+		}
+	}
 
 	[System.Serializable]
 	public struct SimpleStateMachineMeshFilter 
@@ -165,6 +197,7 @@ namespace SimpleStateMachines
 	{
 		public string name;
 		public SimpleStateMachineGameObject simpleStateMachineGameObject;
+		public SimpleStateMachineTransform simpleStateMachineTransform;
 		public SimpleStateMachineMeshFilter simpleStateMachineMeshFilter;
 		public SimpleStateMachineMeshRenderer simpleStateMachineMeshRenderer;
 		public SimpleStateMachineImage simpleStateMachineImage;
@@ -238,6 +271,11 @@ namespace SimpleStateMachines
 
 			 var m_targetGameObject = SimpleStateMachineToGameObjectContainer[_targetStateMachineMonoBehaviour];
 			m_applyStateMachineGroup.simpleStateMachineGameObject.Apply(m_targetGameObject);
+
+			var m_targetTransform = _targetStateMachineMonoBehaviour.transform;
+			var m_targetRectTransform = m_targetTransform as RectTransform;
+			if (m_targetTransform && m_targetRectTransform is null)
+				m_applyStateMachineGroup.simpleStateMachineTransform.Apply(m_targetTransform);
 
 			var m_targetMeshFilter = _targetStateMachineMonoBehaviour.meshFilter;
 			m_applyStateMachineGroup.simpleStateMachineMeshFilter.Apply(m_targetMeshFilter);
